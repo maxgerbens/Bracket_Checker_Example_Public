@@ -34,15 +34,9 @@ jobs:
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
-
-      # CodeQL Security Analysis
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: csharp
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        
+      - name: CodeQL Bundle
+        run: CodeQL Bundle
 
       # Dependency Review (only on pull requests)
       - name: Dependency Review
