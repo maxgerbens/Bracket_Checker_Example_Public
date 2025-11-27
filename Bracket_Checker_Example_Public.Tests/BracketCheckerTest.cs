@@ -9,14 +9,14 @@ public class BracketCheckerTest
     [TestMethod]
     public void TestCheckSuccess()
     {
-        bool result = BracketChecker.Check("(hello())");
+        var result = BracketChecker.Check("(hello())");
         Assert.IsTrue(result);
     }
 
     [TestMethod]
     public void TestCheckFail()
     {
-        bool result = BracketChecker.Check("(hello()");
+        var result = BracketChecker.Check("(hello()");
         Assert.IsFalse(result);
     }
 }
