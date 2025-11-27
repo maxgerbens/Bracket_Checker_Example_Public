@@ -35,6 +35,9 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
         
+      - name: codeql
+        run: CodeQL Bundle
+        
 
       # Dependency Review (only on pull requests)
       - name: Dependency Review
