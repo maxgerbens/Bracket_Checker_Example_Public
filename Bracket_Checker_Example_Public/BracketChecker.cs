@@ -4,9 +4,9 @@ public static class BracketChecker
 {
     public static bool Check(string input)
     {
-        var openCount = 0;
-        var closedCount = 0;
-        foreach (var c in input)
+        int openCount = 0;
+        int closedCount = 0;
+        foreach (char c in input)
         {
             switch (c)
             {
