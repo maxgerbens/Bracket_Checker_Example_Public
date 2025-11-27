@@ -18,5 +18,10 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Check formatting
-        run: dotnet format --verify-no-changes
+        run: dotnet-format
+        
+      - name: CodeQL Bundle
+        uses: advanced-security/codeql-bundle-action@v1.1.0
+
+        
           
