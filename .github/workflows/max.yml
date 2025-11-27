@@ -1,73 +1,52 @@
-name: CI Pipeline
-run-name: CI - Build, Format & Security
+name: .NET
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
   pull_request:
-    branches: [main]
+    branches: ["main"]
 
 jobs:
-  # Format check job
-  format:
-    name: Code Format Check
+  build:
     runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+      contents: read
+      pull-requests: write
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "9.0.x"
+          dotnet-version: 9.0.x
 
-      - name: Run dotnet format
-        run: dotnet format --verify-no-changes --verbosity diagnostic
+      - name: Restore dependencies
+        run: dotnet restore
 
-  # CodeQL Analysis job
-  codeql:
-    name: CodeQL Security Analysis
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Check formatting
+        run: dotnet format --verify-no-changes
 
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+      # CodeQL Security Analysis
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: csharp
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "9.0.x"
-
-      - name: Build project
-        run: dotnet build --no-incremental
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:csharp"
 
-  # Dependency Review job (only on pull requests)
-  dependency-review:
-    name: Dependency Review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
+      # Dependency Review (only on pull requests)
       - name: Dependency Review
+        if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: moderate
-          comment-summary-in-pr: always
